@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:notebook_projectf/Screens/home/home_screen.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class _AuthPageState extends State<AuthPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _passwordVisible = false;
 
   bool isLoading = false;
   bool isLogin = true;
@@ -40,9 +42,20 @@ class _AuthPageState extends State<AuthPage> {
           password: passwordController.text.trim(),
         );
       }
+
+      // Getting the logged-in user's UID
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      String? uid = currentUser?.uid;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(isLogin ? 'Login Successful' : 'Account Created')),
       );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+
     } on FirebaseAuthException catch (e) {
       setState(() {
         if (e.code == 'invalid-email') {
@@ -76,8 +89,8 @@ class _AuthPageState extends State<AuthPage> {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-        Colors.white, // Light color
-    Color(0xFFFBF2E3), // Darker color
+        Colors.white,
+    Color(0xFFFBF2E3),
     ],
     ),
     ),
@@ -90,7 +103,7 @@ class _AuthPageState extends State<AuthPage> {
               children: [
                 Image.asset(
                   'assets/img.png',
-                  height: 300, // Adjust size as needed
+                  height: 250,
                 ),
 
                 const SizedBox(height: 20),
@@ -140,6 +153,17 @@ class _AuthPageState extends State<AuthPage> {
                     labelText: "Password",
                     hintText: "Enter your password",
                     prefixIcon: const Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ),
                     labelStyle: TextStyle(color: Colors.black54),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -157,7 +181,7 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                     errorText: passwordError.isNotEmpty ? passwordError : null,
                   ),
-                  obscureText: true,
+                    obscureText: !_passwordVisible,
                 ),
 
                 const SizedBox(height: 20),

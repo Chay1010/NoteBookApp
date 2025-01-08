@@ -31,8 +31,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add note'),
-        elevation: 0, // Remove shadow for a cleaner gradient
+        title: Text(widget.note != null ? 'Modify/Delete Note' : 'Add Note'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

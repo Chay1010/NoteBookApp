@@ -145,7 +145,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         modifiedAt: DateTime.now(),
         uid: uid,
     );
-    Provider.of<NotesProvider>(context, listen: false).insert(note: note);
+    FocusScope.of(context).unfocus();
+    await Provider.of<NotesProvider>(context, listen: false).insert(note: note);
     Navigator.pop(context, note);
   }
 
@@ -168,7 +169,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     }
 
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null){
+    if (uid == null || widget.note == null){
       print("User is not logged in");
       return;
     }
@@ -186,8 +187,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       modifiedAt: DateTime.now(),
       uid: uid,
     );
-    print("Updating note with id: ${note.id}");
-    Provider.of<NotesProvider>(context, listen: false).update(note: note);
+    FocusScope.of(context).unfocus();
+    await Provider.of<NotesProvider>(context, listen: false).update(note: note);
     Navigator.pop(context, true);
     print(Provider.of<NotesProvider>(context, listen: false).notes);
   }

@@ -168,18 +168,28 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     }
 
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return;
+    if (uid == null){
+      print("User is not logged in");
+      return;
+    }
+
+    if (widget.note == null) {
+      print("Note is null, cannot update.");
+      return;
+    }
 
     final note = Note(
       id: widget.note!.id!,
       title: title,
       description: description,
-      createdAt: DateTime.now(),
+      createdAt: widget.note!.createdAt,
       modifiedAt: DateTime.now(),
       uid: uid,
     );
+    print("Updating note with id: ${note.id}");
     Provider.of<NotesProvider>(context, listen: false).update(note: note);
-    Navigator.pop(context, note);
+    Navigator.pop(context, true);
+    print(Provider.of<NotesProvider>(context, listen: false).notes);
   }
 
   _deleteNote() async{
